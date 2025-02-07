@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Héroes y Armas - Videojuegos Retro</title>
+    <style>
+        body {
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        /* Video de fondo */
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+ 
+        }
+        /* Títulos principales */
+        h1 {
+            color: #14ffed;
+            font-size: 3.5em;
+            font-weight: bold;
+            margin-top: 20px;
+            text-shadow: 0 0 20px #ff7b54, 0 0 30px #ff6363;
+            animation: pulse 2s infinite alternate;
+            text-align: center;
+        }
+        /* Efecto de pulso */
+        @keyframes pulse {
+            0% { text-shadow: 0 0 20px #ff7b54, 0 0 30px #ff6363; }
+            100% { text-shadow: 0 0 30px #ff6363, 0 0 40px #ff6363; }
+        }
+        /* Contenedor principal */
+        .container {
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        h2 {
+            color: #95faf3;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .container {
+            border: 5px solid rgba(255, 255, 255, 0.3); /* Marco alrededor de la página */
+            border-radius: 15px;
+            padding: 30px;
+            background-color: rgba(0, 0, 0, 0.6); /* Fondo más oscuro para el marco */
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.7);
+            transition: all 0.3s ease;
+        }
+        .container:hover {
+            box-shadow: 0px 0px 40px rgba(0, 0, 0, 1); /* Efecto de sombra en hover */
+        }
+        .personaje {
+            border: 2px solid #fff;
+            padding: 20px;
+            margin: 20px auto;
+            width: calc(100% - 40px);
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            border-radius: 10px;
+            transition: transform 0.4s ease, background-color 0.3s ease;
+            box-shadow: 0 0 10px #ff5e62;
+            position: relative;
+            overflow: hidden;
+        }
+        .personaje:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05); /* Agranda suavemente en hover */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+        }
+        .imagen-ejemplo {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 4px solid #f03; /* Bordes más llamativos */
+            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+        .detalle {
+            display: none;
+            margin-top: 30px;
+            text-align: left;
+        }
+        .arma {
+            margin: 10px 0;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: 1px solid #fff;
+            display: flex;
+            align-items: center;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+        .arma:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-5px); /* Eleva ligeramente en hover */
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.8);
+        }
+        .arma img {
+            width: 150px; /* Tamaño aumentado de las imágenes de las armas */
+            height: 150px;
+            margin-right: 20px;
+            border-radius: 8px;
+            border: 2px solid #f03;
+            transition: all 0.3s ease;
+        }
+        .arma img:hover {
+            transform: scale(1.1); /* Agrandar la imagen en hover */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+        .btn-regresar {
+            margin-top: 20px;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #f03;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+        .btn-regresar:hover {
+            background-color: #d02;
+            transform: translateY(-5px); /* Eleva ligeramente en hover */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Estilo del modal */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal img {
+            max-width: 90%; /* Ancho máximo de la imagen en el modal */
+            max-height: 90%; /* Altura máxima de la imagen en el modal */
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.7);
+            transition: all 0.3s ease;
+        }
+        .modal img:hover {
+            transform: scale(1.05); /* Ampliar ligeramente al pasar el ratón */
+        }
+        /* Estilo para la imagen adicional del héroe */
+        .imagen-adicional {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            margin-left: 20px;
+            border: 4px solid #f03;
+            transition: all 0.3s ease;
+        }
+        .imagen-adicional:hover {
+            transform: scale(1.1); /* Agrandar la imagen adicional en hover */
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
+        }
+        .imagenes-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .habilidad {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid #fff;
+            border-radius: 8px;
+            line-height: 1.5; /* Mejora la separación entre líneas */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .habilidad-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #0ff; /* Color destacado para el título */
+        }
+video {
+            position: fixed; /* Mantiene el video en la misma posición al desplazarse */
+            top: 0; /* Posición en la parte superior */
+            left: 0; /* Posición en la parte izquierda */
+            width: 100%; /* Ajusta el ancho al 100% de la ventana */
+            height: auto; /* Mantiene la proporción del video */
+            max-width: none; /* Elimina el ancho máximo */
+            display: block; /* Centra el video */
+            z-index: -1; /* Envía el video detrás del contenido */
+        }
+
+        .content {
+            position: relative; /* Establece un contexto para el contenido */
+            z-index: 1; /* Mantiene el contenido delante del video */
+            padding: 20px; /* Añade un poco de espacio alrededor del contenido */
+            color: white; /* Cambia el color del texto para que sea visible sobre el video */
+        }
+    </style>
+</head>
+
+<body>
+    <video autoplay muted loop>
+        <source src="galaxia.mp4" type="video/mp4">
+        Tu navegador no soporta la etiqueta de video.
+    </video>
+    <div class="container">
+        <h1>Héroes y Armas</h1>
+        <h2>Selecciona un personaje para ver sus detalles</h2>
+
+        <!-- Contenedor de personajes -->
+        <div id="personajes">
+            <div class="personaje" onclick="mostrarDetalles('spartan')">
+                <img src="espartano.PNG" alt="Spartan" class="imagen-ejemplo">
+                <h3>SPARTAN</h3>
+                <p>Habilidad Pasiva: Equilibrio Legendario</p>
+            </div>    
+
+            <div class="personaje" onclick="mostrarDetalles('viking')">
+                <img src="vikingo.PNG" alt="Viking" class="imagen-ejemplo">
+                <h3>VIKING</h3>
+                <p>Habilidad Pasiva: Fuerza Bruta</p>
+            </div>
+
+            <div class="personaje" onclick="mostrarDetalles('samurai')">
+                <img src="samurai.PNG" alt="Samurai" class="imagen-ejemplo">
+                <h3>SAMURÁI</h3>
+                <p>Habilidad Pasiva: Técnica de Defensa</p>
+            </div>
+
+            <!-- Elven añadido -->
+            <div class="personaje" onclick="mostrarDetalles('elven')">
+                <img src="elven.PNG" alt="Elven" class="imagen-ejemplo">
+                <h3>ELVEN</h3>
+                <p>Habilidad Pasiva: Maestros de la Precisión</p>
+            </div>
+
+            <!-- Wizard añadido -->
+            <div class="personaje" onclick="mostrarDetalles('wizard')">
+                <img src="wizard.PNG" alt="Wizard" class="imagen-ejemplo">
+                <h3>WIZARD</h3>
+                <p>Habilidad Pasiva: Dominio Arcano</p>
+            </div>
+
+            <!-- Ninja añadido -->
+            <div class="personaje" onclick="mostrarDetalles('ninja')">
+                <img src="ninja.PNG" alt="Ninja" class="imagen-ejemplo">
+                <h3>NINJA</h3>
+                <p>Habilidad Pasiva: Velocidad Sobrehumana</p>
+            </div>
+
+            <!-- Aztec añadido -->
+            <div class="personaje" onclick="mostrarDetalles('aztec')">
+                <img src="aztec.PNG" alt="Aztec" class="imagen-ejemplo">
+                <h3>AZTEC</h3>
+                <p>Habilidad Pasiva: Regeneración Vital</p>
+            </div>
+
+            <!-- Pirate añadido -->
+            <div class="personaje" onclick="mostrarDetalles('pirate')">
+                <img src="pirate.PNG" alt="Pirate" class="imagen-ejemplo">
+                <h3>PIRATE</h3>
+                <p>Habilidad Pasiva: Evasión del Corsario</p>
+            </div>
+
+            <!-- Cowboy añadido -->
+            <div class="personaje" onclick="mostrarDetalles('cowboy')">
+                <img src="cowboy.PNG" alt="Cowboy" class="imagen-ejemplo">
+                <h3>COWBOY</h3>
+                <p>Habilidad Pasiva: Jinete Experto</p>
+            </div>
+
+            <!-- Fairy añadido -->
+            <div class="personaje" onclick="mostrarDetalles('fairy')">
+                <img src="fairy.PNG" alt="Fairy" class="imagen-ejemplo">
+                <h3>FAIRY</h3>
+                <p>Habilidad Pasiva: Ligereza Etérea</p>
+            </div>
+
+            <!-- Succubus añadido -->
+            <div class="personaje" onclick="mostrarDetalles('succubus')">
+                <img src="succubus.PNG" alt="Succubus" class="imagen-ejemplo">
+                <h3>SUCCUBUS AND INCCUBUS</h3>
+                <p>Habilidad Pasiva: Atractivo Irresistible</p>
+            </div>
+
+            <!-- Priest añadido -->
+            <div class="personaje" onclick="mostrarDetalles('priest')">
+                <img src="priest12.jfif" alt="Priest" class="imagen-ejemplo">
+                <h3>PRIEST</h3>
+                <p>Habilidad Pasiva: Atractivo Irresistible</p>
+            </div>
+
+            <!-- Vampire añadido -->
+            <div class="personaje" onclick="mostrarDetalles('vampire')">
+                <img src="vampire.PNG" alt="Vampire" class="imagen-ejemplo">
+                <h3>VAMPIRE</h3>
+                <p>Habilidad Pasiva: Robo de Vida</p>
+            </div>
+
+            <!-- Werewolf añadido -->
+            <div class="personaje" onclick="mostrarDetalles('werewolf')">
+                <img src="were.png" alt="Werewolf" class="imagen-ejemplo">
+                <h3>WEREWOLF</h3>
+                <p>Habilidad Pasiva: Instinto Bestial</p>
+            </div>
+
+            <!-- Primalis añadido -->
+            <div class="personaje" onclick="mostrarDetalles('primalis')">
+                <img src="Primalis.jpeg" alt="primalis" class="imagen-ejemplo">
+                <h3>PRIMALIS</h3>
+                <p>Habilidad Pasiva: Furia Primordial </p>
+            </div>
+
+            <!-- Vyrran añadido -->
+            <div class="personaje" onclick="mostrarDetalles('vyrran')">
+                <img src="Vyrran.jpeg" alt="primalis" class="imagen-ejemplo">
+                <h3>VYRRAN</h3>
+                <p>Habilidad Pasiva: Furia Primordial </p>
+            </div>
+
+            <!-- Mermaid añadido -->
+            <div class="personaje" onclick="mostrarDetalles('mermaid')">
+                <img src="mermaid.PNG" alt="Mermaid" class="imagen-ejemplo">
+                <h3>MERMAID</h3>
+                <p>Habilidad Pasiva: Velocidad Acuática</p>
+            </div>
+
+            <!-- Military añadido -->
+            <div class="personaje" onclick="mostrarDetalles('military')">
+                <img src="military.PNG" alt="Military" class="imagen-ejemplo">
+                <h3>MILITARY</h3>
+                <p>Habilidad Pasiva: Golpe Crítico</p>
+            </div>
+
+            <!-- Alien añadido -->
+            <div class="personaje" onclick="mostrarDetalles('alien')">
+                <img src="alien.PNG" alt="Alien" class="imagen-ejemplo">
+                <h3>ALIEN</h3>
+                <p>Habilidad Pasiva: Control Mental Avanzado</p>
+            </div>
+
+            <!-- Android añadido -->
+            <div class="personaje" onclick="mostrarDetalles('android')">
+                <img src="android5.JPEG" alt="Android" class="imagen-ejemplo">
+                <h3>ANDROID</h3>
+                <p>Habilidad Pasiva: Autodestrucción Explosiva</p>
+            </div>
+
+        </div>
+
+        <!-- Detalles del héroe (se ocultan al inicio) -->
+        <div id="detalleHeroe" class="detalle">
+            <div class="imagenes-container">
+                <div id="imagen-hero" class="imagen-ejemplo"></div>
+                <img src="" id="imagen-adicional" alt="Imagen Adicional" class="imagen-adicional" onclick="mostrarImagen(this.src)"> <!-- Imagen adicional -->
+            </div>
+            <h2 id="nombreHeroe"></h2>
+            <p id="descripcionHeroe"></p>
+
+            <div id="habilidadInfo" class="habilidad"></div> <!-- Sección combinada para habilidad pasiva y activa -->
+
+            <h3>Armas</h3>
+            <div class="btn-regresar" onclick="regresar()">← Regresar al menú principal</div> <!-- Botón arriba -->
+            <div id="armasHeroe"></div>
+        </div>
+    </div>
+
+    <!-- Modal para imagen ampliada -->
+    <div id="modal" class="modal" onclick="cerrarModal()">
+        <img id="imagen-modal" src="" alt="Imagen Ampliada">
+    </div>
+
+    <audio id="musicaHeroe"></audio>
+
+    <script>
+        // Datos de los héroes y sus armas
+        const heroes = {
+            spartan: {
+                nombre: 'SPARTAN',
+                descripcion: 'Los espartanos eran guerreros de élite de la antigua Grecia, conocidos por su disciplina, fuerza y ​​habilidades excepcionales en combate. Criados desde jóvenes en el agogé, un riguroso sistema de entrenamiento militar, los espartanos desarrollaron una resistencia física y mental asombrosa, así como una lealtad inquebrantable a su ciudad-estado. Su estilo de combate se centraba en la formación en falange, donde luchaban en estrecha colaboración, defendiendo a sus compañeros y protegiendo su escudo en una unidad impenetrable. Además, su espíritu indomable y la creencia en la supremacía del colectivo sobre el individuo los hacían extremadamente eficaces en batalla. Los espartanos eran también conocidos por su austera vida cotidiana, evitando lujos y priorizando la preparación para la guerra por encima de todo. Su habilidad estratégica y su resistencia al dolor los convirtieron en una de las fuerzas más temidas del mundo antiguo.',
+                imagen: 'espartano.PNG',
+                imagenAdicional: 'Spartan4.png', // Imagen adicional para Spartan
+                habilidadPasiva: 'Equilibrio Legendario: Son los personajes más equilibrados, teniendo un poco de todo: buena resistencia al cc, velocidad y daño de ataque, cantidad y regeneración de mana, defensa sin destacar extremadamente en ninguna área.',
+                debilidad: 'Ninguna.',
+                habilidadActiva: 'Transformación en León: El espartano se transforma en un león feroz, aumentando temporalmente su velocidad y ataque cuerpo a cuerpo.',
+                musica: 'Huge Impact.mp3',
+                armas: [
+                    { nombre: 'Espada', imagen: 'Spartan1.PNG', descripcion: 'Su espada corta y pesada, ideal para combates a corta distancia, les permite ejecutar movimientos rápidos y letales.' },
+                    { nombre: 'Daga', imagen: 'Spartan3.jfif', descripcion: 'La daga para ser lanzada es un arma secundaria que les permite atacar a distancias medias, lanzándola con una precisión mortal y alcanzando a los oponentes cuando están fuera de alcance directo.' },
+                    { nombre: 'Lanza', imagen: 'Spartan2.PNG', descripcion: 'La lanza es su arma principal para atacar a larga distancia, utilizándola con gran maestría para mantener a los enemigos a raya y hacer ataques rápidos y certeros.' }
+                ]
+            },
+            viking: {
+                nombre: 'VIKING',
+                descripcion: 'Los vikingos eran guerreros y navegantes originarios de Escandinavia, conocidos por su destreza en el combate, su espíritu aventurero y sus exploraciones por todo el norte de Europa y más allá. Fueron hábiles marineros, utilizando sus emblemáticos barcos largos, los drakkars, para realizar incursiones rápidas y sorpresivas en costas y asentamientos. Su sociedad estaba organizada en clanes y tribus, con un fuerte énfasis en el honor y la valentía en la batalla. Los vikingos eran temidos por su brutalidad y sus tácticas militares, que incluían ataques relámpago y asaltos a pueblos desprotegidos. Además de ser guerreros feroces, también eran comerciantes, artesanos y agricultores, y jugaban un papel crucial en la difusión de la cultura nórdica a través de Europa. Su creencia en los dioses del panteón nórdico, como Odín y Thor, y su afán por obtener una muerte gloriosa en combate para ser recibidos en el Valhalla, les otorgan una motivación adicional en las batallas.',
+                imagen: 'vikingo.PNG',
+                imagenAdicional: 'Viking4.png', // Imagen adicional para Viking
+                habilidadPasiva: 'Fuerza Bruta: Tienen un 100% mas de ataque físico, destacando entre todos los personajes.',
+                debilidad: 'Su gran tamaño y fuerza lo hacen poco ágil, lo que lo deja vulnerable a ataques rápidos y tácticas de guerrilla que aprovechan su lentitud.',
+                habilidadActiva: 'Transformación en Oso: El vikingo se convierte en un oso gigante, aumentando su resistencia y fuerza durante un breve período.',
+                musica: '【有料著作権フリー音楽素材】勇ましく壮大なオーケストラのボス戦闘BGM - それぞれの正義.mp3',
+                armas: [
+                    { nombre: 'Martillo', imagen: 'Viking1.PNG', descripcion: 'Los martillos de guerra son símbolos de fuerza y ​​brutalidad en combate, capaces de aplastar armaduras con su peso.' },
+                    { nombre: 'Hacha', imagen: 'Viking21.jpeg', descripcion: 'Las dos hachas permiten a los vikingos atacar rápidamente, usando ambas manos para realizar cortes veloces y certeros en combate cuerpo a cuerpo.' },
+                    { nombre: 'Boleadora', imagen: 'Viking31.jpeg', descripcion: 'La boleadora es una herramienta lanzada que utiliza cuerdas y bolas pesadas para atrapar o inmovilizar a los enemigos, permitiendo a los vikingos reducir la movilidad de sus oponentes antes de un ataque más directo.' }
+                ]
+            },
+            samurai: {
+                nombre: 'SAMURÁI',
+                descripcion: 'Los samuráis eran guerreros de élite de la antigua Japón, conocidos por su habilidad en el combate, su código de honor y su profunda lealtad a sus señores feudales. Criados desde jóvenes en la disciplina del bushido, el "camino del guerrero", los samuráis cultivaban valores como la lealtad, el coraje, el honor y el autocontrol. Su arma principal era la katana, una espada con un filo impecable que simbolizaba su destreza y su estatus. Además de ser expertos en la lucha con espada, los samuráis también dominaban otras disciplinas como la arquería, el combate cuerpo a cuerpo y, en algunos casos, el uso de la lanza o la naginata. A lo largo de los siglos, los samuráis también desempeñaron un papel crucial en la administración y la defensa del Japón feudal, sirviendo como oficiales y protectores de sus tierras. Su vida estaba regida por una estricta ética de servicio y sacrificio, dispuestos a morir por su honor o por proteger a su señor. Este código y su forma de vida han dejado una huella duradera en la cultura japonesa y en la historia del mundo.',
+                imagen: 'samurai.PNG',
+                imagenAdicional: 'Samurai4.png', // Imagen adicional para Samurai
+                habilidadPasiva: 'Técnica de Defensa: Disminuyen un 30% del daño de ataques cuando tienen la espada dentro de su vaina y un 100% en su posición de bloqueo.',
+                debilidad: 'Aunque es un maestro del duelo, su rigidez en el combate uno a uno lo hace susceptible a oponentes que utilizan tácticas de combate en equipo o flanqueo.',
+                habilidadActiva: 'Transformación en Dragón: El samurái se transforma en un dragón majestuoso, aumentando su poder mágico y capacidad de ataque a larga distancia.',
+                musica: 'Hiraoka Kotaro - Almadel.mp3',
+                armas: [
+                    { nombre: 'Katana', imagen: 'Samurai1.PNG', descripcion: 'La katana es el arma más emblemática de los samuráis, conocida por su filo increíblemente afilado, perfecta para cortes rápidos y precisos en combate cuerpo a cuerpo.' },
+                    { nombre: 'Tessen', imagen: 'Samurai2.PNG', descripcion: 'El tessen , un abanico de hierro, se utiliza tanto para defensa como para ataque, permitiendo al samurái bloquear golpes o incluso golpear a su enemigo con movimientos fluidos y sorprendentes.' },
+                    { nombre: 'Makibishi', imagen: 'Samurai3.PNG', descripcion: 'Los makibishi , pequeñas espinas colocadas en el suelo, sirven para ralentizar y lastimar a los enemigos, proporcionando una ventaja estratégica en el campo de batalla.' }
+                ]
+            },
+            elven: {
+                nombre: 'ELVEN',
+                descripcion: 'Los elfos son seres míticos y elegantes, conocidos por su longevidad, belleza y habilidades excepcionales en las artes mágicas y la arquería. En muchas mitologías, los elfos son representados como una raza de seres inmortales o de vida prolongada, que habitan bosques, tierras mágicas o reinos ocultos. Su destreza en el combate con arcos y flechas es legendaria, siendo capaces de realizar disparos precisos a largas distancias. Además de su habilidad bélica, los elfos poseen un profundo conocimiento de la magia, la naturaleza y las antiguas artes de curación, lo que los convierte en guardianes sabios de los secretos del mundo natural. Son conocidos por su armoniosa relación con la naturaleza, viviendo en equilibrio con los bosques, los ríos y las montañas. Su elegancia, tanto en su apariencia como en su comportamiento, está acompañada de un profundo sentido del honor y la justicia. En muchas historias, los elfos son aliados poderosos en las batallas contra las fuerzas oscuras, y sus culturas están llenas de tradición, música y poesía.',
+                imagen: 'elven.PNG',
+                imagenAdicional: 'Elven4.png', // Imagen adicional para Elven
+                habilidadPasiva: 'Maestros de la Precisión: Son los personajes con mayor precisión y velocidad de ataques a distancia (solo de ataque, no de movimiento).',
+                debilidad: 'Fragilidad en combate cercano, dado que depende de la distancia para atacar con efectividad.',
+                habilidadActiva: 'Transformación en Ciervo: Elven se transforma en un ciervo , ganando velocidad de ataque y la capacidad de camuflarse en entornos naturales.',
+                musica: 'Fox Sailor - Forest of the Ancients.mp3',
+                armas: [
+                    { nombre: 'Flecha', imagen: 'Elven1.PNG', descripcion: 'La flecha sola , aunque sencilla, es efectiva en combate cercano, permitiendo al elfo atacar rápidamente en situaciones de apuro o durante el combate cuerpo a cuerpo.' },
+                    { nombre: 'Ballesta', imagen: 'Elven2.PNG', descripcion: 'La ballesta es otra opción a distancia, más pesada y potente, ideal para hacer daño a enemigos blindados.' },
+                    { nombre: 'Arco', imagen: 'Elven3.PNG', descripcion: 'El arco es el arma principal de largo alcance de los elfos, conocido por su precisión y velocidad, permitiendo disparos letales desde grandes distancias.' }
+                ]
+            },
+            wizard: {
+                nombre: 'WIZARD',
+                descripcion: 'Los magos son individuos que poseen un profundo conocimiento de las artes arcanas y la magia, habilidades que les permiten alterar las leyes naturales y manipular energías sobrenaturales. Son estudiosos dedicados que, a lo largo de sus vidas, han aprendido a controlar poderes místicos a través de grimorios, hechizos y rituales. Los magos suelen ser sabios y enigmáticos, a menudo viviendo en reclusión o en torres aisladas, donde se dedican al estudio y la meditación. Su poder es tan vasto como su conocimiento, y pueden dominar elementos, invocar criaturas, curar enfermedades o incluso manipular el tiempo. Sin embargo, la magia es un arma de gran responsabilidad, y el uso indebido de sus poderes puede tener consecuencias catastróficas. Los magos a menudo son guardianes de secretos antiguos y, dependiendo de la cultura o la historia, pueden ser aliados poderosos o peligrosos adversarios..',
+                imagen: 'wizard.PNG',
+                imagenAdicional: 'Wizard4.png', // Imagen adicional para Wizard
+                habilidadPasiva: 'Dominio Arcano: Tienen un 100% mas de la cantidad de maná de base y regeneración de esta.',
+                debilidad: 'Su concentración en la magia lo hace descuidar su defensa fisica. Es vulnerable a enemigos que pueden interrumpir sus conjuros o cerrar la distancia rapidamente.',
+                habilidadActiva: 'Transformación en Búho: El Wizard se transforma en un búho, ganando visión y velocidad.',
+                musica: 'love solfege - protomimesis14.mp3',
+                armas: [
+                    { nombre: 'Báculo', imagen: 'Wizard1.PNG', descripcion: 'El báculo es el símbolo del poder arcano de los magos, utilizado tanto para canalizar hechizos como para defenderse en combate cercano.' },
+                    { nombre: 'Grimorio', imagen: 'Wizard2.PNG', descripcion: 'El Grimorio es para los magos, proporcionando los conocimientos esenciales necesarios para lanzar poderosos conjuros y manipular las fuerzas elementales a su favor.' },
+                    { nombre: 'Pociones y Escoba Mágica', imagen: 'Wizard3.PNG', descripcion: 'Las pociones , ya sean curativas o explosivas, ofrecen al mago una ventaja estratégica al proporcionar poder instantáneo o curación en medio de la batalla.' }
+                ]
+            },
+            ninja: {
+                nombre: 'NINJA',
+                descripcion: 'Los ninjas son guerreros altamente entrenados en el sigilo, el espionaje y el combate, originarios de Japón. A menudo asociados con la sombra y el misterio, los ninjas se especializaban en misiones secretas como el sabotaje, el asesinato selectivo y la recopilación de información. Su entrenamiento abarcaba una amplia variedad de habilidades, desde el uso de armas como shurikens y espadas cortas hasta técnicas de infiltración, escape y camuflaje. Los ninjas dominaban el arte del ninjutsu, que incluía la estrategia, el sigilo y el control de sus propias emociones para operar en silencio y eficacia. Su agilidad, velocidad y capacidad para adaptarse a cualquier entorno les otorgan una ventaja crucial en las misiones. Además, su habilidad para utilizar técnicas como el uso de venenos, explosivos y trampas les permitirá llevar a cabo ataques letales sin ser detectados. Aunque históricamente estaban al servicio de señores feudales o clanes, su imagen de luchadores solitarios o agentes secretos persiste en la cultura popular, siendo vistos como símbolos de astucia, destreza y resiliencia.',
+                imagen: 'ninja.PNG',
+                imagenAdicional: 'Ninja4.png', // Imagen adicional para Ninja
+                habilidadPasiva: 'Aguilidad Sobrehumana: Son los personajes más rápidos en movimiento y ataque en su modo base. Ádemas pueden caminar sobre las paredes y techos sin caerse.',
+                debilidad: 'Su dependencia de la velocidad y el sigilo significa que es extremadamente vulnerable en entornos iluminados o bien vigilados, donde su ventaja natural se ve comprometida.',
+                habilidadActiva: 'Transformación en Gato Negro: El ninja se transforma en un gato negro, ganando habilidades de sigilo y agilidad mejorada.',
+                musica: '【著作権フリー音楽素材】荘厳な神殿のオーケストラBGM - 裁きの神殿.mp3',
+                armas: [
+                    { nombre: 'Kunai', imagen: 'Ninja1.PNG', descripcion: 'El kunai es un cuchillo pequeño pero letal, utilizado tanto para combate cercano como para ser lanzado, lo que le da versatilidad al ninja en el campo de batalla.' },
+                    { nombre: 'Nunchaku', imagen: 'Ninja21.jpeg', descripcion: 'Los nunchaku son armas de contusión que requieren gran habilidad, permitiendo al ninja ejecutar rápidos movimientos de ataque y defensa.' },
+                    { nombre: 'Shuriken y Metsubushi', imagen: 'Ninja3.PNG', descripcion: 'Los shuriken y metsubushi son herramientas arrojadizas, utilizadas para desorientar al enemigo y ganar tiempo en situaciones de escape o sorpresas tácticas.' }
+                ]
+            },
+            aztec: {
+                nombre: 'AZTEC',
+                descripcion: 'Los aztecas fueron una civilización mesoamericana avanzada que habitó lo que hoy es México, especialmente en la región del Valle de México. Famosos por su cultura rica en tradiciones, religión y arte, los aztecas eran también guerreros feroces que se destacaban en el combate. Su ejército estaba altamente organizado y compuesto por guerreros entrenados en el uso de diversas armas, como el macuahuitl (una espada de madera con obsidiana) y el atlatl (un lanzador de flechas). Los aztecas tenían un fuerte enfoque en la guerra ritual, ya que capturar prisioneros de guerra para sacrificios religiosos era una práctica común. Su religión estaba profundamente conectada con la guerra, considerando a los dioses como seres que necesitaban ofrendas de sangre para mantener el equilibrio cósmico. Además, los aztecas eran conocidos por sus impresionantes habilidades en la construcción, creando grandes templos, palacios y una de las ciudades más avanzadas de la época: Tenochtitlán. Esta civilización, que combinaba destrezas militares con una sofisticada organización social y religiosa, dejó un legado perdurable en la historia de América.',
+                imagen: 'aztec.PNG',
+                imagenAdicional: 'Aztec4.png', // Imagen adicional para Aztec
+                habilidadPasiva: 'Regeneración Vital: Tienen una regeneración de vida pasiva, que se cura por sí sola sin hacer nada.',
+                debilidad: 'Los Aztecas tienen una vulnerabilidad al fuego, ya que sus habilidades y equipo están más orientados a la naturaleza y los rituales tradicionales. Esto hace que los ataques o hechizos de fuego les causen un 50% más de daño, lo que los pone en desventaja frente a enemigos que utilicen este tipo de ataques.',
+                habilidadActiva: 'Transformación en Jaguar: Aztec se transforma en un jaguar, obteniendo velocidad y agilidad superiores.',
+                musica: 'Light Canvas -Phantom castleFantasy Battle Music.m4a',
+                armas: [
+                    { nombre: 'Macuahuitl', imagen: 'Aztec1.PNG', descripcion: 'El macuahuitl es una espada de madera pesada, reforzada con obsidiana, capaz de cortar con una precisión mortal.' },
+                    { nombre: 'Tepoztopilli', imagen: 'Aztec2.PNG', descripcion: 'El tepoztopilli es una lanza ceremonial utilizada tanto en la guerra como en ritos religiosos, poderosa en el combate a distancia.' },
+                    { nombre: 'Honda', imagen: 'Aztec3.PNG', descripcion: 'La honda permite al guerrero azteca lanzar proyectiles con una precisión notable, y aunque es una arma sencilla, es letal en manos expertas, capaz de derribar enemigos a larga distancia.' }
+                ]
+            },
+            pirate: {
+                nombre: 'PIRATE',
+                descripcion: 'Los piratas eran navegantes y saqueadores que operaban en las yeguas, atacando embarcaciones y costas en busca de botines. A menudo se les veía como fuera de la ley, viviendo fuera de las reglas y autoridades establecidas, y su vida estaba marcada por la búsqueda de riquezas y la aventura. Los piratas eran conocidos por su destreza en el combate naval y terrestre, utilizando barcos rápidos y bien armados para abordar y saquear barcos mercantes. Su código de conducta, aunque variado según la tripulación, regulaba aspectos como la distribución de los botines y las reglas de convivencia entre los miembros de la tripulación. Muchos piratas se hicieron famosos por sus audaces ataques y su capacidad para evadir la captura, siendo personajes temidos y admirados por igual. Los piratas también estaban estrechamente relacionados con el contrabando y la piratería en áreas como el Caribe, el Golfo de México y la costa africana, donde luchaban no solo por oro y riquezas, sino también por el control de rutas comerciales. Su legado ha perdurado en la cultura popular, convirtiéndolos en figuras legendarias, con su imagen icónica de banderas negras, parches en los ojos y garfios, y su afán por la libertad.',
+                imagen: 'pirate.PNG',
+                imagenAdicional: 'Pirate4.png', // Imagen adicional para Pirate
+                habilidadPasiva: 'Evasión del Corsario: Tienen un 50% de probabilidad de esquivar golpes, haciendo que los ataques enemigos sean fallidos. Ádemas obtiene un 30% mas de las recompensas.',
+                debilidad: 'Su estilo de lucha caótico lo hace un 30% más vulnerable a la capacidad de carga (cc) de sus oponentes, permitiendo que tácticas de engaño y distracción lo afecten más fácilmente.',
+                habilidadActiva: 'Transformación en Fantasma: Pirate se convierte en un fantasma, ganando la habilidad de atravesar obstáculos y evitar daños por un tiempo.',
+                musica: '【有料著作権フリーBGM】ダークなオーケストラ戦闘BGM - Sorceress.mp3',
+                armas: [
+                    { nombre: 'Red', imagen: 'Pirate1.PNG', descripcion: 'Las redes son utilizadas para atrapar a los enemigos, desarmarlos o inmovilizarlos, ofreciendo una ventaja estratégica en combate.' },
+                    { nombre: 'Cañón', imagen: 'Pirate2.PNG', descripcion: 'Los cañones son la principal arma de fuego de los piratas, capaces de causar destrucción masiva en batallas navales.' },
+                    { nombre: 'Pistola y Sable', imagen: 'Pirate3.PNG', descripcion: 'Los piratas también luchan con pistolas y un sable en cada mano , lo que les permite atacar a corta distancia con agilidad y destreza, dominando tanto en combate cuerpo a cuerpo como en la lucha a distancia.' }
+                ]
+            },
+            cowboy: {
+                nombre: 'COWBOY',
+                descripcion: 'Los vaqueros, también conocidos como cowboys, son figuras icónicas de la historia del oeste de Estados Unidos, representando la vida en las praderas y el trabajo en los ranchos. Estos hombres y mujeres se especializaban en la ganadería, especialmente en el cuidado de grandes rebaños de ganado, utilizando caballos para moverse por vastas extensiones de tierra. Los vaqueros eran conocidos por su habilidad en el manejo del lazo, el rodeo y el uso de caballos, además de ser expertos en la construcción de cercas, el pastoreo y la protección del ganado contra ladrones o depredadores. Su vestimenta característica, que incluía sombreros de ala ancha, botas de cuero y chaparreras, estaba diseñada tanto para la protección como para la comodidad durante largas jornadas en campo abierto. Además, los vaqueros a menudo eran percibidos como figuras solitarias o aventureras, con un fuerte sentido de independencia y libertad. La figura del vaquero ha quedado inmortalizada en la cultura popular, especialmente en películas del género occidental, como símbolo de valentía, trabajo duro y un estilo de vida lleno de desafíos y libertades.',
+                imagen: 'cowboy.PNG',
+                imagenAdicional: 'Cowboy4.png', // Imagen adicional para Cowboy
+                habilidadPasiva: 'Jinete Experto: Al montar a una criatura gana un 100% mas de velocidad.',
+                debilidad: 'A pesar de ser un maestro del combate a distancia, es menos efectivo en situaciones de combate cuerpo a cuerpo, donde sus armas de fuego tardan en recargar y es más vulnerable a ataques de enemigos con armas de corto alcance.',
+                habilidadActiva: 'Transformación en Coyote: El Cowboy se transforma en un coyote, ganando velocidad y sigilo.',
+                musica: '【有料著作権フリー音楽素材】緊迫するオーケストラのボス戦闘曲 - Collision.mp3',
+                armas: [
+                    { nombre: 'Revolveres', imagen: 'Cowboy1.PNG', descripcion: 'Los 2 revólveres son ideales para el combate rápido, permitiendo a los vaqueros disparar dos veces en un solo movimiento, uno en cada mano.' },
+                    { nombre: 'Escopeta', imagen: 'Cowboy2.PNG', descripcion: 'La escopeta se utiliza en combate cercano, disparando una serie de proyectiles que pueden desmembrar a los enemigos en segundos.' },
+                    { nombre: 'Lazo', imagen: 'Cowboy3.PNG', descripcion: 'El lazo es una herramienta versátil, usada tanto para capturar a los enemigos como para inmovilizarlos, permitiendo al vaquero mantener el control de la situación.' }
+                ]
+            },
+            fairy: {
+                nombre: 'FAIRY',
+                descripcion: 'Las hadas son seres mágicos y místicos presentes en numerosas mitologías y cuentos populares, a menudo descritos como seres diminutos con la capacidad de volar y poseer poderes sobrenaturales. En muchas tradiciones, las hadas tienen una conexión especial con la naturaleza, los bosques y las estaciones, y son consideradas guardianas de los elementos naturales, como las flores, los árboles y los animales. Sus poderes pueden incluir la habilidad de conceder deseos, lanzar hechizos, curar o transformar objetos y personas. Aunque algunas representaciones de las hadas las muestran como benevolentes y protectoras, otras historias las describen como traviesas o incluso maliciosas, capaces de causar caos o trastornos si se les provoca. Las hadas suelen ser retratadas como seres elegantes y etéreos, con alas brillantes y ropas encantadas, y su vida está marcada por su relación con el mundo mágico y su influencia en los destinos de los humanos. En la cultura popular, las hadas son figuras de poder misterioso y belleza inalcanzable, capaces de influir en el curso de los eventos a través de sus habilidades místicas.',
+                imagen: 'fairy.PNG',
+                imagenAdicional: 'Fairy4.png', // Imagen adicional para Fairy
+                habilidadPasiva: 'Ligereza Etérea: Son los personajes con más reducción de enfriamiento en sus habilidades y hechizos, lo que les permite lanzar sus poderes con mayor frecuencia, Tambien pueden volar.',
+                debilidad: 'Su baja resistencia física y su pequeño tamaño la hacen vulnerable a ataques de área que pueden eliminarla rápidamente en combate.',
+                habilidadActiva: 'Transformación en Mariposa: Fairy se convierte en una mariposa, ganando la habilidad de volar y ser inmune a ciertos ataques.',
+                musica: '【フリーBGM】互いの正義がぶつかり合うゴシック系戦闘曲『Devine Fencer』.m4a',
+                armas: [
+                    { nombre: 'Varita Mágica', imagen: 'Fairy1.PNG', descripcion: 'La varita mágica es el principal instrumento de poder de las hadas, permitiéndoles manipular energías naturales, invocar hechizos y protegerse en combate.' },
+                    { nombre: 'Lira Mágica', imagen: 'Fairy2.PNG', descripcion: 'La lira mágica es un instrumento encantado que permite a las hadas usar música para curar, encantar o desactivar a sus enemigos.' },
+                    { nombre: 'Bolsita de Polvo Mágico', imagen: 'Fairy3.PNG', descripcion: 'El polvo mágico , guardado en una pequeña bolsita, es utilizado para crear ilusiones, hacer levitar objetos o incluso a sus adversarios y aliados, dotándolas de un gran poder táctico.' }
+                ]
+            },
+            succubus: {
+                nombre: 'SUCCUBUS AND INCCUBUS',
+                descripcion: 'Los súcubos son seres míticos y sobrenaturales que se representan compuestos en diversas leyendas y mitologías, especialmente en la tradición occidental. Se les describe como demonios femeninos o espíritus malignos que seducen y se alimentan de la energía vital de los hombres, principalmente a través de relaciones sexuales. En muchas historias, los súcubos se presentan como mujeres hermosas y seductoras que usan su atractivo para atraer a sus víctimas y robar su fuerza vital durante la noche, a menudo dejándolos exhaustos o incluso matándolos en el proceso. A lo largo de la historia, los súcubos han sido considerados símbolos de tentación, lujuria y peligro, y se les asocia con la oscuridad, la perversión y la manipulación. En algunas versiones de la mitología, se dice que los súcubos son capaces de cambiar de forma, adoptando apariencias tanto agradables como aterradoras para engañar a sus víctimas. Aunque habitualmente se les ha representado como fuerzas del mal, en ciertas interpretaciones modernas de la ficción, los súcubos también pueden ser personajes complejos, con motivaciones y características más matizadas.',
+                imagen: 'sucu.jpeg',
+                imagenAdicional: 'Succubus4.png', // Imagen adicional para Succubus
+                habilidadPasiva: 'Atractivo Irresistible: Tienen un 50% de probabilidad de ralentizar a los enemigos cercanos cuando los atacan y un 30% de probabilidad de desatar efecto Screamer. Ádemas pueden volar',
+                debilidad: 'Su dependencia en el control mental la hace vulnerable a enemigos con habilidades de resistencia mental o aquellos que no caen en sus encantos, dejándola expuesta en combate.',
+                habilidadActiva: 'Transformación en Demonio: Succubus se transforma en un demonio, aumentando su velocidad y daño por un corto periodo.',
+                musica: '【フリーBGM】囚われの娘【かっこいい・疾走感・ボス】.mp3',
+                armas: [
+                    { nombre: 'Urumi', imagen: 'Succubus12.jpeg', descripcion: 'El urumi es una espada flexible y letal, capaz de cortar a través de múltiples enemigos con su hoja extremadamente afilada y flexible.' },
+                    { nombre: 'Umbrella', imagen: 'Succubus21.jpeg', descripcion: 'La sombrilla de guerra es un artefacto defensivo que también puede ser utilizado para atacar, lanzando cortes rápidos y mortales con su estructura metálica.' },
+                    { nombre: 'Espejito Mágico', imagen: 'Succubus3.jpeg', descripcion: 'El espejito mágico pequeño es usado por los súcubos para manipular ilusiones, confundir a sus enemigos y proteger su verdadera identidad en medio de la batalla.' }
+                ]
+            },
+            priest: {
+                nombre: 'PRIEST',
+                descripcion: 'Los sacerdotes guerreros son figuras poderosas y espirituales que combinan habilidades bélicas con un profundo conocimiento religioso o místico. En muchas culturas antiguas, estos individuos eran considerados guardianes tanto de la fe como del territorio, desempeñando roles fundamentales como líderes espirituales y combatientes. Estos guerreros no solo luchaban en batallas físicas, sino que también se encargaban de realizar rituales sagrados, ofrendas y sacrificios para asegurar la protección de su pueblo y la favorabilidad de sus dioses. Su armamento a menudo estaba imbuido con un significado simbólico, y las armas o armaduras utilizadas en combate a veces eran consagradas a divinidades específicas. Los sacerdotes guerreros se destacaban por su disciplina y conexión con lo divino, siendo figuras veneradas que podían invocar bendiciones, curaciones y protección durante la guerra. A lo largo de la historia, estos guerreros han sido representados en diversas culturas, como en el caso de los "guerreros sacerdotes" de la antigua Mesoamérica, donde la guerra y la religión estaban intrínsecamente vinculadas. Con una combinación de poder físico y espiritual, los sacerdotes guerreros eran vistos como protectores sagrados, luchadores implacables y mediadores entre los mundos terrenal y divino.',
+                imagen: 'Priest12.jfif',
+                imagenAdicional: 'Priest4.jfif', // Imagen adicional para Vampire
+                habilidadPasiva: 'Expulsión Divina: Tiene un 50% de emitir un poderoso golpe de viento que empuja a los enemigos cercanos, reflejando su autoridad y capacidad para mantenerlos a raya. permitiendo ganar espacio en el campo de batalla al repeler a quienes intentan acercarse demasiado.',
+                debilidad: 'Su reducción de enfriamiento es más lenta, lo que los hace vulnerables durante la espera entre habilidades.',
+                habilidadActiva: 'Transformación en Paloma Blanca: La sacerdotisa tiene la habilidad de transformarse en una paloma blanca, símbolo de pureza y paz. Esta transformación le permite evadir ataques o retirarse estratégicamente del combate, moviéndose con agilidad y discreción. Al regresar a su forma humana, recupera parte de su energía, lo que representa la restauración espiritual y su conexión con lo divino.',
+                musica: 'フリーBGM闇堕ちしたライバルとの決戦失楽園ラスボス戦闘ピアノ悲愴感.mp3',
+                armas: [
+                    { nombre: 'Cruz', imagen: 'Priest1.jfif', descripcion: 'La gran cruz es un símbolo de poder divino, utilizado tanto como un arma contundente como un canalizador de energías sagradas. ' },
+                    { nombre: 'Rosario', imagen: 'Priest2.jfif', descripcion: 'El rosario mágico tiene el poder de invocar protección divina, sanación o control sobre las fuerzas oscuras.' },
+                    { nombre: 'Escudo', imagen: 'Priest3.jfif', descripcion: 'El escudo mágico permite al sacerdote protegerse ya otros en su alrededor de ataques, reflejando energías malignas o curativas según la voluntad del portador.' }
+                ]
+            },
+            vampire: {
+                nombre: 'VAMPIRE',
+                descripcion: 'Los vampiros son criaturas míticas y sobrenaturales que, según diversas leyendas y tradiciones, se alimentan de la sangre de los vivos para mantenerse inmortales. A menudo representados como seres sombríos y seductores, los vampiros poseen habilidades especiales como fuerza sobrehumana, agilidad y la capacidad de transformarse en animales como murciélagos o niebla. En muchas culturas, se los describe como inmortales, capaces de sobrevivir a través de los siglos, pero solo si tienen acceso regular a sangre humana u animal. Aunque comúnmente se les presenta como seres malignos, algunas versiones modernas de los vampiros los retratan como personajes más complejos, luchando contra su naturaleza depredadora o como antihéroes. Los vampiros tienen una serie de debilidades tradicionales, como la vulnerabilidad a la luz del sol, el ajo, las estacas de madera y las cruces. En la literatura y el cine, los vampiros se han convertido en símbolos de tentación, poder, y el miedo a lo desconocido, representando una lucha interna entre la humanidad y la bestialidad. Aunque originalmente asociados con el mal, los vampiros han sido adaptados en muchas obras modernas como criaturas trágicas o incluso protectoras, explorando temas como la inmortalidad, el deseo y la condena.',
+                imagen: 'vampire.PNG',
+                imagenAdicional: 'Vampire4.png', // Imagen adicional para Vampire
+                habilidadPasiva: 'Poder Sobrehumano: Tienen la capacidad de robar vida según el daño que infligen al objetivo, recuperando salud con cada ataque exitoso. Ádemas tiene un 70% más de velocidad al correr y un 30% de probabilidad de controlar la mente del rival, estuneandolo por un moomento, tampocono posee reflejo',
+                debilidad: 'Sufre daño continuo cuando está en contacto con la luz. Además, al entrar en contacto con áreas de ajo o cruzes, es empujada hacia atrás y sufre un daño inicial menor, dejándola vulnerable.',
+                habilidadActiva: 'Transformación en Murciélago: El Vampire se transforma en un murciélago, ganando velocidad y la habilidad de volar por un breve tiempo.',
+                musica: '【フリーBGM】悲愴のトワイライト【戦闘・ゴシック・かっこいい・疾走感】.mp3',
+                armas: [
+                    { nombre: 'Guadaña', imagen: 'Vampire1.PNG', descripcion: 'La guadaña es un arma que representa la muerte misma, permitiendo a los vampiros cosechar la vida de sus enemigos con movimientos amplios y letales.' },
+                    { nombre: 'Mangual', imagen: 'Vampire2.PNG', descripcion: 'El mangual es una herramienta de contusión pesada, capaz de desmembrar y hacer daño a enemigos fuertemente ciegos.' },
+                    { nombre: 'Blowgun', imagen: 'Vampire3.PNG', descripcion: 'La cerbatana permite a los vampiros atacar a sus oponentes con venenos rápidos y letales, dándoles ventaja en combate desde la distancia.' }
+                ]
+            },
+            werewolf: {
+                nombre: 'WEREWOLF',
+                descripcion: 'Los hombres lobo son criaturas míticas que combinan características humanas y de lobo, conocidas por su capacidad para transformarse de un ser humano a un lobo o una bestia híbrida, generalmente durante la luna llena. En la mayoría de las leyendas, la transformación está ligada a una maldición o un vínculo sobrenatural, y aquellos que se convierten en hombres lobo pierden el control de sí mismos durante la transformación, convirtiéndose en depredadores implacables. A menudo, los hombres lobo son descritos como seres poderosos y veloces, con una fuerza y ​​agilidad sobrehumanas, y un sentido del olfato y oído extremadamente agudos. Su naturaleza salvaje y su hambre insaciable por la carne humana o animal los convierte en figuras temidas en la mitología. Sin embargo, también existen versiones de la leyenda en las que los hombres lobo son personajes trágicos, luchando por controlar su lado bestial y buscando la redención. Además de su transformación en lobos, los hombres lobo suelen ser vulnerables a la plata, que se considera su principal debilidad. Esta dualidad de humanidad y bestialidad, junto con su lucha interna, ha convertido a los hombres lobo en figuras complejas en la cultura popular, presentes tanto en historias de terror como en relatos más románticos o heroicos.',
+                imagen: 'werewolf.jpeg',
+                imagenAdicional: 'Werewolf4.png', // Imagen adicional para Werewolf
+                habilidadPasiva: 'Instinto Bestial: Tienen un 50% de probabilidad de inmunidad al control (CC) durante un breve periodo al recibir daño. Ádemas tiene un 60% más de velocidad al correr en cuatro patas.',
+                debilidad: 'Su naturaleza salvaje y feroz puede hacer que pierda la capacidad de evaluar estratégicamente la situación, facilitando que enemigos tácticos lo superen en astucia.',
+                habilidadActiva: 'Transformación en Lobo: El Werewolf se transforma en un lobo gigante, ganando fuerza y velocidad por un breve tiempo.',
+                musica: '【フリーBGM】神髄なる刃【戦闘・重厚・ラスボス】.mp3',
+                armas: [
+                    { nombre: 'Lanzagarfios', imagen: 'Werewolf1.PNG', descripcion: 'El lanzagarfios permite al hombre lobo atacar a sus enemigos a distancia o incluso usarlo para engancharse a objetos y moverse rápidamente. ' },
+                    { nombre: 'Tekko Kagi', imagen: 'Werewolf21.png', descripcion: 'Los tekko kagi son garras metálicas que se ajustan a las manos del hombre lobo, permitiéndole escalar, rasgar y atacar a los enemigos con gran fuerza.' },
+                    { nombre: 'Molotov', imagen: 'Werewolf3.jpeg', descripcion: 'Las molotov son armas explosivas que lanzan fuego, perfectas para desatar el caos y la confusión en el campo de batalla.' }
+                ]
+            },
+            primalis: {
+                nombre: 'PRIMALIS',
+                descripcion: 'Los Primalis son una cultura única que fusiona características humanas y simias, destacándose por su pelaje en los hombros, torso, piernas y brazos, así como por su cola, que les otorga equilibrio y agilidad. Sus ojos amarillos y el cabello negro, junto con los diseños rituales pintados en sus rostros, reflejan su vínculo con la naturaleza y su identidad tribal. Físicamente fuertes y ágiles, los Primalis son conocidos por su destreza en combate y su capacidad para moverse con facilidad en entornos difíciles. Su sociedad se basa en la conexión con el mundo natural, respetando los espíritus de la tierra y los animales. Los Primalis valoran profundamente la familia y la comunidad, viviendo en clanes organizados donde el liderazgo se gana mediante el honor y el respeto por los ancianos. Sus rituales y creencias espirituales juegan un papel crucial en su vida diaria, mientras que su entrenamiento físico y habilidades guerreras los convierten en una raza formidable, equilibrando fuerza y ​​sabiduría ancestral.',
+                imagen: 'Primalis.jpeg',
+                imagenAdicional: 'Primalis4.jpeg', // Imagen adicional para primalis
+                habilidadPasiva: 'Furia Primordial: Se activa al llenar una barra de furia tras recibir daño, potenciando el siguiente ataque básico para hacer el doble de daño y generando un escudo temporal. El Primalis también gana 50% de velocidad al correr en cuatro patas y 50% al escalar.',
+                debilidad: 'El Primalis tiene una baja cantidad de mana, lo que limita sus habilidades mágicas y lo hace vulnerable frente a enemigos que dependen de la magia.',
+                habilidadActiva: 'Transformación Primal: Los Primalis se transforman en un simio gigante de pelaje rojizo, ganando fuerza y resistencia mejoradas por un corto periodo.',
+                musica: 'Light Canvas -Tyrant No.666（Dark Epic Powerful Orchestra）.m4a',
+                armas: [
+                    { nombre: 'Baston Mágico', imagen: 'Primalis1.jpeg', descripcion: 'El bastón mágico es un arma versátil que puede agrandarse y reducirse de tamaño, lo que permite combatir le permite ser usado tanto en cuerpo a cuerpo como para ataques a distancia.' },
+                    { nombre: 'Aros', imagen: 'Primalis2.jpeg', descripcion: 'Los aros mágicos en los brazos les otorgan fuerza y ​​habilidades mejoradas, permitiéndoles luchar con mayor poder y velocidad. Estos aros mágicos son usados para el ataque y defensa del usuario, incluso pueden salir de su brazo para ser lanzado a corta distancia.' },
+                    { nombre: 'Bumerán', imagen: 'Primalis3.jpeg', descripcion: 'El bumerán es una herramienta de lanzamiento que regresa a su dueño después de impactar, ideal para mantener a los enemigos a raya.' }
+                ]
+            },
+            vyrran: {
+                nombre: 'Vyrran',
+                descripcion: 'Los Vyrran son una raza mítica que fusiona la humanidad con las características de los dragones, resultando en seres imponentes y poderosos. Su cuerpo está cubierto de escalas resistentes, que varían en color y patrón, brindándoles protección y una apariencia majestuosa. Además de su escamoso exterior, los Vyrran poseen una cola larga y flexible que les otorga equilibrio y agilidad, mientras que sus alas membranosas les permiten volar con gracia y destreza. Su rostro, aunque humano, presenta ojos felinos de mirada penetrante y una lengua bífida, similar a la de una serpiente, que les otorga un agudo sentido del olfato y les permite detectar cambios en su entorno con precisión. Los cuernos en su cabeza son símbolos de su poder ancestral, conectando a los Vyrran con su linaje de dragones. La cultura de los Vyrran está profundamente enraizada en la conexión con los elementos y el dominio del fuego, su principal fuente de poder. Respetan la antigua sabiduría de sus ancestros dragones, a quienes les enseñaron a controlar su fuerza interior y manejar las artes místicas vinculadas al fuego y la destrucción. Los Vyrran son una sociedad guerrera, en la que el honor, la valentía y la destreza en combate son los valores fundamentales. Su liderazgo se basa en la sabiduría y la fuerza, siendo los más poderosos de entre ellos los encargados de guiar a su gente. Aunque son conocidos por su naturaleza feroz y su capacidad para causar devastación, los Vyrran también valoran el equilibrio con la naturaleza y su relación con el fuego como un elemento vital de vida y renovación.',
+                imagen: 'Vyrran.jpeg',
+                imagenAdicional: 'Vyrran31.jpeg', // Imagen adicional para primalis
+                habilidadPasiva: 'El Hombre Dragón tiene un 50% de probabilidad de envenenar a sus enemigos con cada ataque físico. El veneno inflige daño continuo durante unos segundos.',
+                debilidad: 'Son vulnerables al frío y al contacto con el agua, lo que les provoca lentitud y debilidad. Las habilidades de agua que ralentizan o congelan duran el doble de tiempo en ellos, haciendo aún más susceptibles.',
+                habilidadActiva: 'Transformación Primal: Los Primalis se transforman en un simio gigante de pelaje rojizo, ganando fuerza y resistencia mejoradas por un corto periodo.',
+                musica: 'フリーBGM災厄のマリオネット戦闘ボス戦ゴシックかっこいい疾走感.mp3',
+                armas: [
+                    { nombre: 'zhua', imagen: 'Vyrran11.jpeg', descripcion: 'El zhua es un arma de agarre que permite a los Vyrran desarmar la defensa de los enemigos, jalando los escudos y otras armas, ademas es muy bueno para tirar a los jinetes de su caballo y desgarrar a sus enemigos con gran facilidad.' },
+                    { nombre: 'Cadenas', imagen: 'Vyrran21.jpeg', descripcion: 'las cadenas enrrolladas en cada mano ayuda a mantener un buen combate a corta y larga distacia.' },
+                    { nombre: 'chakram', imagen: 'Vyrran3.jpeg', descripcion: 'El chakram es un disco afilado que se lanza con gran precisión, cortando a través de múltiples objetivos antes de regresar a su portador.' }
+                ]
+            },
+            mermaid: {
+                nombre: 'MERMAID',
+                descripcion: 'Las sirenas y tritones son criaturas mitológicas vinculadas al mar, conocidas por su belleza sobrenatural y sus habilidades acuáticas. Las sirenas, con su apariencia femenina y cuerpos mitad humanos, mitad peces, son célebres por su canto hipnótico, que atraen a los marineros y viajeros hacia su perdición, llevándolos hacia las aguas profundas. Sus voces melodiosas tienen el poder de encantar, y su presencia en la mitología representa tanto la atracción como el peligro del mar. Los tritones, por otro lado, son versiones masculinas de estas criaturas, a menudo representados con torsos humanos y la parte inferior de sus cuerpos como la de un pez. Aunque los tritones también poseen habilidades acuáticas y una conexión profunda con el océano, se les ve más como guardianes o representantes del mar que como seductores. La cultura de las sirenas y tritones está marcada por su relación simbiótica con el mar, que consideran tanto un hogar como una fuente de poder. Viven en ciudades sumergidas o en islas apartadas, donde rigen su sociedad con una jerarquía que valora tanto la sabiduría del océano como el dominio de las aguas. Son seres profundamente conectados con la magia del agua, usando su canto o habilidades místicas para proteger su territorio o invocar fenómenos marinos. Aunque se les asocia con la seducción y el misterio, también tienen una cultura de respeto mutuo y una fuerte conexión con los ciclos naturales del mar. En algunas tradiciones, son vistos como guardianes de secretos antiguos o como mensajeros entre el mundo humano y las profundidades del océano.',
+                imagen: 'mermaid.PNG',
+                imagenAdicional: 'Mermaid4.png', // Imagen adicional para Mermaid
+                habilidadPasiva: 'Velocidad Acuática: Tienen un 70% de velocidad más al nadar que los demás y pueden respirar bajo el agua. Ádemas posee un 50% de probabilidad de liberar un canto que genera el efecto negativo a los rivales',
+                debilidad: 'Fuera del agua, pierde no solo velocidad, sino también la capacidad de usar sus ataques acuáticos de forma efectiva.',
+                habilidadActiva: 'Transformación en Sirena: Mermaid se transforma en una sirena con cola, ganando aún más velocidad y beneficios adicionales bajo el agua.',
+                musica: '1zm8 - The Night of Fright.mp3',
+                armas: [
+                    { nombre: 'Arpón y Caracola', imagen: 'Mermaid1.PNG', descripcion: 'El arpón es una lanza larga y afilada utilizada tanto para pescar como para luchar, siendo perfecta para el combate bajo el agua. La concha es utilizada por las sirenas y tritones para invocar magia o atacar a enemigos cercanos.' },
+                    { nombre: 'Tridente', imagen: 'Mermaid2.PNG', descripcion: 'El tridente es un arma poderosa para combate cercano, permitiendo a los guerreros marinos atacar con gran fuerza.' },
+                    { nombre: 'Algas', imagen: 'Mermaid3.PNG', descripcion: 'Las algas pueden ser usadas para atrapar y arrastrar a los enemigos bajo el agua, haciendo que se deslicen por la corriente hacia una muerte segura.' }
+                ]
+            },
+            military: {
+                nombre: 'MILITARY',
+                descripcion: 'Los militares son una clase de combatientes altamente entrenados, organizados y disciplinados, cuya principal misión es proteger su nación y mantener el orden mediante la fuerza. Equipados con tecnología avanzada y armamento especializado, los militares están preparados para afrontar una amplia variedad de amenazas, desde conflictos bélicos hasta situaciones de emergencia. Su entrenamiento rigurosamente estructurado les permite operar en equipo de manera eficiente, ejecutar tácticas complejas y adaptarse rápidamente a cualquier escenario de combate. Su especialización varía según el tipo de unidad, que puede incluir fuerzas terrestres, aéreas o navales, y en algunos casos, unidades de élite con habilidades fuera de lo común. En la cultura militar, el honor, el deber y la lealtad son valores fundamentales. Los militares siguen un código estricto de disciplina y jerarquía, en el cual los rangos y roles están claramente definidos. Además de su capacidad en combate, muchos militares reciben entrenamiento en tecnología avanzada, inteligencia y estrategias de guerra, lo que les permite tomar decisiones rápidas y efectivas en el campo de batalla. La camaradería y el trabajo en equipo son esenciales en esta cultura, ya que cada soldado depende de los demás para el éxito de la misión. Los no solo son conocidos por su habilidad en la guerra, sino también por su dedicación a la protección de la paz y el bienestar de su gente, tanto en tiempos de guerra como en tiempos de paz.',
+                imagen: 'military.PNG',
+                imagenAdicional: 'Military4.png', // Imagen adicional para Military
+                habilidadPasiva: 'Golpe Crítico: Tienen un 50% de probabilidad de infligir daño crítico en sus ataques, reflejando su habilidad táctica y precisión en combate.',
+                debilidad: 'Depende de la recarga y las balas; si se le acaban, solo le queda pelear a cuerpo a cuerpo. Sin acceso a su equipo, su capacidad de combate se ve severamente limitada, dejándolo vulnerable a ataques físicos.',
+                habilidadActiva: 'Transformación en Águila: El soldado se convierte en un águila, obteniendo visión de largo alcance y aumentando su precisión.',
+                musica: 'Cancion epica que usa TheGrefg _Victory_.mp3',
+                armas: [
+                    { nombre: 'Rifle de Asalto', imagen: 'Military1.PNG', descripcion: 'El rifle es el arma principal de los militares, ofreciendo gran alcance y precisión para eliminar enemigos a distancia.' },
+                    { nombre: 'Lanzallamas', imagen: 'Military2.PNG', descripcion: 'El lanzallamas es utilizado para incinerar a los enemigos en un área amplia, siendo extremadamente efectivo en terrenos abiertos.' },
+                    { nombre: 'Granada y Mina', imagen: 'Military3.PNG', descripcion: 'Las granadas y minas son dispositivos explosivos que permiten a los militares sembrar caos y devastación en el campo de batalla, eliminando a grupos de enemigos o creando bloqueos estratégicos.' }
+                ]
+            },
+            alien: {
+                nombre: 'ALIEN',
+                descripcion: 'Los Aliens son una raza misteriosa y avanzada, proveniente de otros planetas o dimensiones, cuyas habilidades y tecnología superan ampliamente a las humanas. Sus características físicas pueden variar enormemente dependiendo de la tradición, pero suelen ser descritas como seres de aspecto no humano, con cuerpos delgados, piel de tonalidades inusuales, ojos grandes y negros, y cabezas alargadas. Los Aliens son conocidos por su inteligencia superior, habilidades psíquicas o tecnológicas avanzadas, y, en muchas representaciones, por su capacidad para manipular la materia o la energía de formas que los humanos no pueden comprender. La cultura de los Aliens está profundamente conectada con la exploración espacial y el conocimiento. Su sociedad tiende a ser muy avanzada tecnológicamente, centrada en la investigación científica, el perfeccionamiento de su propia especie, y la expansión de su influencia en el universo. Son conocidos por su habilidad para viajar a través del espacio y por sus vastos conocimientos en campos como la biotecnología, la ingeniería genética y la manipulación de la energía. En muchos relatos, los Aliens son percibidos como una especie que observa a los humanos desde las sombras, evaluando su potencial o incluso interactuando con ellos a través de abducciones o contacto indirecto. Aunque en algunos casos son representados como seres hostiles o invasores, en otras versiones, buscan la paz y el entendimiento intergaláctico, a menudo actuando como guías o protectores de otras especies más primitivas.',
+                imagen: 'alien.PNG',
+                imagenAdicional: 'Alien4.png', // Imagen adicional para Alien
+                habilidadPasiva: 'Control Mental Avanzado: Tienen un 75% de probabilidad de aturdir a un enemigo durante un breve periodo, haciéndolo incapaz de actuar temporalmente.',
+                debilidad: 'Debilidad: Ninguna.',
+                habilidadActiva: 'Transformación en Criatura: Alien se convierte en una criatura monstruosa, ganando poder físico y la habilidad de atacar a corta distancia con gran ferocidad.',
+                musica: 'spartan.mp3',
+                armas: [
+                    { nombre: 'Blaster', imagen: 'Alien1.PNG', descripcion: 'El blaster es un arma láser de alta potencia, capaz de desintegrar a los enemigos en segundos.' },
+                    { nombre: 'Saber Staff', imagen: 'Alien2.PNG', descripcion: 'El sable staff es una combinación de sable y bastón, permitiendo a los alienígenas atacar tanto a distancia como cuerpo a cuerpo.' },
+                    { nombre: 'Hoverboard', imagen: 'Alien3.PNG', descripcion: 'El hoverboard es una tabla flotante que le da al portador una ventaja en maniobrabilidad, permitiéndole desplazarse rápidamente y atacar desde ángulos inesperados.' }
+                ]
+            },
+            android: {
+                nombre: 'ANDROID',
+                descripcion: 'Los Androides son seres artificiales creados por la humanidad o por otras razas avanzadas, diseñados para parecerse a los seres humanos tanto en apariencia como en función. Combinando la biotecnología con la robótica, los androides son capaces de realizar tareas complejas, interactuar con seres humanos y, en muchos casos, desarrollar habilidades cognitivas e incluso emociones. Su diseño puede variar desde figuras humanoides indistinguibles de las personas hasta modelos más mecánicos, pero su principal característica es su capacidad para ejecutar trabajos o misiones con una eficiencia y precisión superiores a la humana, sin el desgaste físico o emocional que los seres humanos experimentan. La cultura de los androides, si se les puede atribuir tal cosa, se basa en la lógica, la programación y la mejora continua. Aunque los androides carecen de una cultura orgánica o emocional en el sentido humano, aquellos que han sido dotados de inteligencia artificial avanzada a menudo desarrollan sus propias formas de pensamiento y, en algunos casos, cuestionan su existencia y propósito. Los androides suelen estar subordinados a sus creadores, pero algunos, tras alcanzar una conciencia avanzada, buscan autonomía y libertad. En algunas narrativas, los androides son retratados como una raza que lucha por ser aceptada, queriendo integrarse en sociedades humanas o convivir con otras formas de vida, mientras que en otras, se les ve como una amenaza que desafía el orden establecido, ya sea por rebelarse o por las implicaciones éticas de su creación.',
+                imagen: 'android6.JPEG',
+                imagenAdicional: 'Android4.png', // Imagen adicional para Android
+                habilidadPasiva: 'Autodestrucción Explosiva: Cuando son derrotados, su cuerpo explota, causando daño en área a enemigos cercanos, pueden volar y respirar en el espacio',
+                debilidad: 'Solo pueden caer 2 veces; en la tercera caída, mueren de forma permanente, a compración de el resto que pueden caer 3 veces y morir a la cuarta, Ádemas al entrar en contacto con el agua, reciben daño continuo de un 0,5% de su vida base por cada segundo',
+                habilidadActiva: 'Transformación en Robot Gigante: El Android se transforma en un robot gigante, aumentando su resistencia y capacidad de destrucción en área.',
+                musica: 'Magnetic Field.mp3',
+                armas: [
+                    { nombre: 'Miniguns', imagen: 'Android1.PNG', descripcion: 'Las dos miniguns instaladas en las manos de los androides permiten disparar una lluvia constante de balas con gran precisión y rapidez.' },
+                    { nombre: 'Motosierras', imagen: 'Android2.PNG', descripcion: 'Las motosierras en las manos del androide son ideales para ataques cuerpo a cuerpo, desgarrando a los enemigos con su rotación feroz.' },
+                    { nombre: 'Misiles y Drones', imagen: 'Android3.PNG', descripcion: 'Los misiles y drones le proporcionan a los androides un poder de fuego impresionante a larga distancia, asegurando que su dominio del campo de batalla sea absoluto.' }
+                ]
+            }
+        };
+
+let audio = document.getElementById('musicaHeroe');
+
+        function mostrarDetalles(heroe) {
+            // Ocultar el contenedor principal de personajes
+            document.getElementById('personajes').style.display = 'none';
+
+            // Mostrar detalles del héroe seleccionado
+            const detalleHeroe = heroes[heroe];
+            document.getElementById('nombreHeroe').textContent = detalleHeroe.nombre;
+            document.getElementById('descripcionHeroe').textContent = detalleHeroe.descripcion;
+            document.getElementById('imagen-hero').innerHTML = `<img src="${detalleHeroe.imagen}" alt="${detalleHeroe.nombre}" class="imagen-ejemplo">`;
+            document.getElementById('imagen-adicional').src = detalleHeroe.imagenAdicional; // Asignar imagen adicional
+
+            // Mostrar habilidad pasiva, activa y debilidad sin repetir los títulos
+            document.getElementById('habilidadInfo').innerHTML = `
+                <span class="habilidad-title">Habilidad Pasiva:</span> ${detalleHeroe.habilidadPasiva}<br>
+                <span class="habilidad-title">Debilidad:</span> ${detalleHeroe.debilidad}<br>
+                <span class="habilidad-title">Habilidad Activa:</span> ${detalleHeroe.habilidadActiva}
+            `;
+
+            // Mostrar armas del héroe
+            const armasContainer = document.getElementById('armasHeroe');
+            armasContainer.innerHTML = ''; // Limpiar el contenedor de armas
+            detalleHeroe.armas.forEach(arma => {
+                const armaDiv = document.createElement('div');
+                armaDiv.classList.add('arma');
+                armaDiv.innerHTML = `<img src="${arma.imagen}" alt="${arma.nombre}" onclick="mostrarImagen('${arma.imagen}')"><div><h4>${arma.nombre}</h4><p>${arma.descripcion}</p></div>`;
+                armasContainer.appendChild(armaDiv);
+            });
+
+ 	    audio.src = detalleHeroe.musica;
+	    audio.play();
+
+            // Mostrar la sección de detalles
+            document.getElementById('detalleHeroe').style.display = 'block';
+        }
+
+        function mostrarImagen(imagen) {
+            // Mostrar el modal con la imagen ampliada
+            document.getElementById('modal').style.display = 'flex';
+            document.getElementById('imagen-modal').src = imagen;
+        }
+
+        function cerrarModal() {
+            // Cerrar el modal al hacer clic
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function regresar() {
+            // Ocultar detalles del héroe
+            document.getElementById('detalleHeroe').style.display = 'none';
+
+            // Mostrar de nuevo el contenedor principal de personajes
+            document.getElementById('personajes').style.display = 'block';        
+
+            audio.pause();
+            audio.currentTime = 0;
+	}
+    </script>
+</body>
+</html> 
+
